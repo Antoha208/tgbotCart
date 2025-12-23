@@ -44,13 +44,13 @@ async function notifyAboutNewApp(appData) {
         const message = 
 `🆕 НОВОЕ ПРИЛОЖЕНИЕ
 
-*Партнер:* ${appData.partner}
-*Приложение:* ${appData.appName}
-*Платформа:* ${appData.platform}
-*Статус:* ${appData.status}
-*Возраст:* ${appData.age || 'Не указан'}
-*Гео:* ${appData.geos || 'Все'}
-*Ссылка:* ${appData.link}`
+Поставщик: ${appData.partner}
+Приложение: ${appData.appName}
+Платформа: ${appData.platform}
+Статус: ${appData.status}
+Возраст: ${appData.age || 'Не указан'}
+Гео: ${appData.geos || 'Все'}
+Ссылка: ${appData.link}`
 
         // Получаем ВСЕХ пользователей
         const users = await getAllUsers()
