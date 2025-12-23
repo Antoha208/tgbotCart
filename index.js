@@ -305,6 +305,11 @@ bot.on('message', async msg => {
     const chatLName = msg.chat.last_name
     const username = msg.chat.username
 
+     console.log('=== DEBUG MESSAGE ===')
+    console.log('От:', username)
+    console.log('Текст:', text)
+    console.log('chatId:', chatId)
+
     if (!username) {
         await bot.sendMessage(chatId, 'Ошибка')
         return

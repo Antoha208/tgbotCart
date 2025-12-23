@@ -9,6 +9,15 @@ module.exports = {
             if (!condidate) {
                 return {message: 'Пользователь не найден!'}
             }
+
+            console.log('3. Результат поиска:')
+        console.log('   - Найден?:', condidate ? 'ДА' : 'НЕТ')
+        if (condidate) {
+            console.log('   - ID:', condidate._id)
+            console.log('   - Username из базы:', condidate.username)
+            console.log('   - Role:', condidate.role)
+            console.log('   - Authorized:', condidate.authorized)
+        }
             
             const passwordCheck = bcryptjs.compareSync(password, condidate.password)
 

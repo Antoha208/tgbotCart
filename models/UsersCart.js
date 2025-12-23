@@ -15,7 +15,7 @@ const UsersCart = new Schema({
     regDate: {type: Date, default: Date.now()},
     authorized: {type: Boolean, default: false}
 }, { 
-    collection: 'userscarts'  // ← ЯВНО УКАЗЫВАЕМ КОЛЛЕКЦИЮ
+    collection: 'userscarts'
 })
 
 module.exports = model('UsersCart', UsersCart)
