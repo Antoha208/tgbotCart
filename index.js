@@ -305,37 +305,50 @@ bot.on('message', async msg => {
     const chatLName = msg.chat.last_name
     const username = msg.chat.username
 
-     console.log('=== DEBUG MESSAGE ===')
+    console.log('=== DEBUG MESSAGE ===')
     console.log('От:', username)
     console.log('Текст:', text)
     console.log('chatId:', chatId)
 
     if (!username) {
-        await bot.sendMessage(chatId, 'Ошибка')
+        console.log('❌ Нет username в сообщении')
+        await bot.sendMessage(chatId, '❌ У вас нет username в Telegram')
         return
     }
 
-    // Пропускаем команду /check (уже обработана)
-    if (text === '/check') return
-    
+    // ВАЖНО: Обрабатываем команды отдельно
     if (text === '/start') {
+        console.log('📝 Пользователь начал диалог')
         await bot.sendMessage(chatId, 
-`Привет! Введите ключ`)
-    } else {
-        // Пытаемся авторизоваться по ключу
-        const result = await login(text, username, chatId, chatFName, chatLName)
-        
-        if (result.message === 'Добро пожаловать') {
-            await bot.sendMessage(chatId, 
+`Привет! Введите ключ.`)
+        return  // ← ВАЖНО: завершаем обработку
+    }
+    
+    if (text === '/check') {
+        // Эту команду обрабатывает bot.onText выше, но на всякий случай
+        console.log('🔍 Пользователь запросил проверку (из общего handler)')
+        return  // ← ВАЖНО: завершаем обработку
+    }
+
+    // Если не команда, значит это пароль для авторизации
+    console.log('🔑 Пользователь отправил ключ, вызываю login()...')
+    const result = await login(text, username, chatId, chatFName, chatLName)
+    
+    console.log('📤 Результат login():')
+    console.log('  - message:', result.message)
+    console.log('  - user:', result.user ? 'получен' : 'нет')
+    console.log('=== DEBUG MESSAGE END ===')
+    
+    if (result.message === 'Добро пожаловать') {
+        await bot.sendMessage(chatId, 
 `✅ Привет, ${result.user.webName}!`)
-            
-            // Если это админ
-            if (result.user.role === 'Admin') {
-                await bot.sendMessage(chatId, 'Используйте /check для ручного запуска проверки')
-            }
-        } else {
-            await bot.sendMessage(chatId, result.message)
+        
+        // Если это админ
+        if (result.user.role === 'Admin') {
+            await bot.sendMessage(chatId, 'Используйте /check для ручного запуска проверки')
         }
+    } else {
+        await bot.sendMessage(chatId, result.message)
     }
 })
 
