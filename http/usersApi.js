@@ -9,15 +9,6 @@ module.exports = {
             if (!condidate) {
                 return {message: 'Пользователь не найден!'}
             }
-
-            console.log('3. Результат поиска:')
-        console.log('   - Найден?:', condidate ? 'ДА' : 'НЕТ')
-        if (condidate) {
-            console.log('   - ID:', condidate._id)
-            console.log('   - Username из базы:', condidate.username)
-            console.log('   - Role:', condidate.role)
-            console.log('   - Authorized:', condidate.authorized)
-        }
             
             const passwordCheck = bcryptjs.compareSync(password, condidate.password)
 
@@ -31,7 +22,7 @@ module.exports = {
                     await condidate.updateOne({$set: {chatId: chatId, first_name: fName, last_name: lName, authorized: true}})
                 }
 
-                const user = await Users.findOne({ username: username })
+                const user = await UsersCart.findOne({ username: username })
                 
                 return {user, message: 'Добро пожаловать'}
             } 

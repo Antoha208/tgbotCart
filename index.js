@@ -334,11 +334,6 @@ bot.on('message', async msg => {
     console.log('🔑 Пользователь отправил ключ, вызываю login()...')
     const result = await login(text, username, chatId, chatFName, chatLName)
     
-    console.log('📤 Результат login():')
-    console.log('  - message:', result.message)
-    console.log('  - user:', result.user ? 'получен' : 'нет')
-    console.log('=== DEBUG MESSAGE END ===')
-    
     if (result.message === 'Добро пожаловать') {
         await bot.sendMessage(chatId, 
 `✅ Привет, ${result.user.webName}!`)
