@@ -42,7 +42,7 @@ async function notifyAboutNewApp(appData) {
         
         // Форматируем сообщение
         const message = 
-`🆕 *НОВОЕ ПРИЛОЖЕНИЕ*
+`🆕 НОВОЕ ПРИЛОЖЕНИЕ
 
 *Партнер:* ${appData.partner}
 *Приложение:* ${appData.appName}
@@ -226,10 +226,10 @@ const banCheckerNEW = async () => {
                     // Отправляем ВСЕМ
                     for (const chatId of webChatIds) {
                         await sendMessageWithRetry(chatId, 
-                `‼️ БАН ПРИЛОЖЕНИЯ
+`‼️ БАН ПРИЛОЖЕНИЯ
 
-                ${app.partner} | ${app.appName}
-                ${app.link}`)
+${app.partner} | ${app.appName}
+${app.link}`)
                         await delay(100)
                     }
                 }
