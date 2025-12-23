@@ -36,7 +36,6 @@ const sendMessageWithRetry = async (chatId, message) => {
 // Функция уведомления о новом приложении
 async function notifyAboutNewApp(appData) {
     try {
-        // Проверяем, не отправляли ли уже уведомление
         if (sentNotifications.has(appData._id.toString())) {
             return false
         }
@@ -50,18 +49,18 @@ async function notifyAboutNewApp(appData) {
 *Платформа:* ${appData.platform}
 *Статус:* ${appData.status}
 *Возраст:* ${appData.age || 'Не указан'}
-*Гео:* ${appData.geos || 'Уточнить'}
+*Гео:* ${appData.geos || 'Все'}
 *Ссылка:* ${appData.link}`
 
-        // Получаем пользователей
+        // Получаем ВСЕХ пользователей
         const users = await getAllUsers()
         const chatIds = users
             .filter(user => user.chatId)
             .map(user => user.chatId)
         
-        console.log(`📱 Отправляю уведомление о новом приложении: ${appData.appName}`)
+        console.log(`📱 Отправляю уведомление о новом приложении всем (${chatIds.length} пользователям): ${appData.appName}`)
         
-        // Отправляем всем пользователям
+        // Отправляем ВСЕМ
         for (const chatId of chatIds) {
             await sendMessageWithRetry(chatId, message)
             await delay(500)
@@ -217,28 +216,21 @@ const banCheckerNEW = async () => {
                     bannedCount++
                     console.log(`  🚫 БАН! ${app.partner} | ${app.appName}`)
                     
+                    // Получаем ВСЕХ пользователей
                     let webChatIds = (await getAllUsers())
                         .filter(user => user.chatId)
                         .map(user => user.chatId)
                     
-                    // Отправляем админу
-                    await sendMessageWithRetry(admin.chatId, 
-`🚨 *БАН ПРИЛОЖЕНИЯ*
-
-${app.partner} | ${app.appName}
-Платформа: ${app.platform}
-Ссылка: ${app.link}`)
+                    console.log(`  📨 Отправляю уведомления ${webChatIds.length} пользователям`)
                     
-                    // Отправляем остальным пользователям
+                    // Отправляем ВСЕМ
                     for (const chatId of webChatIds) {
-                        if (chatId !== admin.chatId) {
-                            await sendMessageWithRetry(chatId, 
-`‼️ БАН ПРИЛОЖЕНИЯ
+                        await sendMessageWithRetry(chatId, 
+                `‼️ БАН ПРИЛОЖЕНИЯ
 
-${app.partner} | ${app.appName}
-${app.link}`)
-                            await delay(100)
-                        }
+                ${app.partner} | ${app.appName}
+                ${app.link}`)
+                        await delay(100)
                     }
                 }
             } catch (error) {
