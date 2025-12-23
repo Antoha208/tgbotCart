@@ -110,7 +110,6 @@ async function checkForNewApps() {
     }
 }
 
-// Основная функция проверки
 const banCheckerNEW = async () => {
     console.log('🔍 Начинаю проверку...')
     
@@ -130,8 +129,12 @@ const banCheckerNEW = async () => {
         console.log(`📱 Приложений для проверки на баны: ${apps.length}`)
 
         let bannedCount = 0
+        let i = 0
         
         for (const app of apps) {
+            i++
+            console.log(`[${new Date().toLocaleTimeString()}] ${i}/${apps.length}: ${app.appName} (${app.platform})`)
+            
             let isBanned = false
 
             try {
@@ -139,18 +142,24 @@ const banCheckerNEW = async () => {
                     try {
                         const response = await axios.get(app.link, {
                             validateStatus: status => status < 500,
-                            timeout: 10000
+                            timeout: 5000  // уменьшил таймаут
                         })
 
                         if (response.status === 404) {
                             isBanned = true
+                            console.log(`  Android: 404, banned=true`)
                         } else {
                             const $ = cheerio.load(response.data)
                             const title = $('h1').text()
-                            if (!title) isBanned = true
+                            if (!title) {
+                                isBanned = true
+                                console.log(`  Android: нет title, banned=true`)
+                            } else {
+                                console.log(`  Android: OK, title есть`)
+                            }
                         }
                     } catch (error) {
-                        // пропускаем ошибки
+                        console.log(`  Android ошибка: ${error.message}`)
                     }
 
                 } else if (app.platform === 'ios') {
@@ -158,19 +167,23 @@ const banCheckerNEW = async () => {
                         const m = String(app.link).match(/id(\d{5,})/)
                         if (!m) {
                             isBanned = true
+                            console.log(`  iOS: не найден ID в ссылке`)
+                            await delay(800)  // задержка перед следующим
                             continue
                         }
 
                         const appId = m[1]
                         const countries = ['nl', 'de', 'fr', 'pl', 'us', 'gb']
                         let found = false
+                        let checkedCountries = 0
 
                         for (const country of countries) {
+                            checkedCountries++
                             const lookupUrl = `https://itunes.apple.com/lookup?id=${appId}&country=${country}`
 
                             try {
                                 const response = await axios.get(lookupUrl, {
-                                    timeout: 10000,
+                                    timeout: 5000,
                                     headers: {
                                         'Cache-Control': 'no-cache',
                                         'Pragma': 'no-cache',
@@ -180,26 +193,29 @@ const banCheckerNEW = async () => {
 
                                 if (response.data?.resultCount > 0) {
                                     found = true
+                                    console.log(`  iOS: найдено в ${country} (${checkedCountries}/${countries.length})`)
                                     break
                                 }
                             } catch (err) {
-                                // пропускаем
+                                console.log(`  iOS ${country} ошибка: ${err.message}`)
                             }
 
-                            await delay(1500 + Math.floor(Math.random() * 1000))
+                            await delay(350 + Math.floor(Math.random() * 150))
                         }
 
                         isBanned = !found
+                        console.log(`  iOS: итог found=${found}, banned=${isBanned}`)
 
                     } catch (error) {
                         isBanned = true
+                        console.log(`  iOS общая ошибка: ${error.message}`)
                     }
                 }
 
                 // Если бан
                 if (isBanned) {
                     bannedCount++
-                    console.log(`🚫 БАН: ${app.appName}`)
+                    console.log(`  🚫 БАН! ${app.partner} | ${app.appName}`)
                     
                     let webChatIds = (await getAllUsers())
                         .filter(user => user.chatId)
@@ -221,15 +237,15 @@ ${app.partner} | ${app.appName}
 
 ${app.partner} | ${app.appName}
 ${app.link}`)
-                            await delay(500)
+                            await delay(100)
                         }
                     }
                 }
             } catch (error) {
-                console.log(`Ошибка проверки ${app.appName}:`, error.message)
+                console.log(`  ОШИБКА проверки: ${error.message}`)
             }
 
-            await delay(5000)
+            await delay(800)
         }
 
         // Итоговое сообщение админу
