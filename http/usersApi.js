@@ -1,10 +1,10 @@
-const Users = require('../models/UsersCart')
+const UsersCart = require('../models/UsersCart')
 const bcryptjs = require('bcryptjs')
 
 module.exports = {
     login: async (password, username, chatId, fName, lName) => {
         try {
-            const condidate = await Users.findOne({ username: username })
+            const condidate = await UsersCart.findOne({ username: username })
             
             if (!condidate) {
                 return {message: 'Пользователь не найден!'}
@@ -34,7 +34,7 @@ module.exports = {
 
     getAllUsers: async () => {
         try {
-            const users = await Users.find({
+            const users = await UsersCart.find({
                 $and: [
                     {role: {$ne: 'CreoChat'}}, 
                     {role: {$ne: 'FinanceChat'}}, 
@@ -53,7 +53,7 @@ module.exports = {
 
     getAdmin: async () => {
         try {
-            const user = await Users.findOne({role: 'Admin'})
+            const user = await UsersCart.findOne({role: 'Admin'})
             return user
         } catch (error) {
             console.log(error)
@@ -63,7 +63,7 @@ module.exports = {
 
     getOneUser: async (username) => {
         try {
-            const user = await Users.findOne({username: username})
+            const user = await UsersCart.findOne({username: username})
             
             if (user) {
                 return user
