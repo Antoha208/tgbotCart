@@ -273,10 +273,7 @@ bot.onText(/\/check/, async (msg) => {
 })
 
 // Подключение к БД
-mongoose.connect(DB_URL, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-})
+mongoose.connect(DB_URL)
 .then(async () => {
     console.log('✅ MongoDB подключена')
     
