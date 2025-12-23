@@ -132,7 +132,7 @@ const banCheckerNEW = async () => {
         
         for (const app of apps) {
             i++
-            console.log(`[${new Date().toLocaleTimeString()}] ${i}/${apps.length}: ${app.appName} (${app.platform})`)
+            // console.log(`[${new Date().toLocaleTimeString()}] ${i}/${apps.length}: ${app.appName} (${app.platform})`)
             
             let isBanned = false
 
@@ -146,15 +146,15 @@ const banCheckerNEW = async () => {
 
                         if (response.status === 404) {
                             isBanned = true
-                            console.log(`  Android: 404, banned=true`)
+                            // console.log(`  Android: 404, banned=true`)
                         } else {
                             const $ = cheerio.load(response.data)
                             const title = $('h1').text()
                             if (!title) {
                                 isBanned = true
-                                console.log(`  Android: нет title, banned=true`)
+                                // console.log(`  Android: нет title, banned=true`)
                             } else {
-                                console.log(`  Android: OK, title есть`)
+                                // console.log(`  Android: OK, title есть`)
                             }
                         }
                     } catch (error) {
@@ -192,7 +192,7 @@ const banCheckerNEW = async () => {
 
                                 if (response.data?.resultCount > 0) {
                                     found = true
-                                    console.log(`  iOS: найдено в ${country} (${checkedCountries}/${countries.length})`)
+                                    // console.log(`  iOS: найдено в ${country} (${checkedCountries}/${countries.length})`)
                                     break
                                 }
                             } catch (err) {
@@ -203,11 +203,11 @@ const banCheckerNEW = async () => {
                         }
 
                         isBanned = !found
-                        console.log(`  iOS: итог found=${found}, banned=${isBanned}`)
+                        // console.log(`  iOS: итог found=${found}, banned=${isBanned}`)
 
                     } catch (error) {
                         isBanned = true
-                        console.log(`  iOS общая ошибка: ${error.message}`)
+                        // console.log(`  iOS общая ошибка: ${error.message}`)
                     }
                 }
 
